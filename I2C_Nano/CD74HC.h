@@ -1,6 +1,6 @@
 #pragma once
 #include "Arduino.h"
-
+//TODO: IMPORTANT -- Check for variable range and crank in some limitation and security code
 extern int _g_channel_truth_table[16][4];
 
 class CD74HC

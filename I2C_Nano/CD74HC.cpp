@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "CD74HC.h"
-
+//TODO: IMPORTANT -- Check for variable range and crank in some limitation and security code
 int _g_channel_truth_table[16][4] = {
 	// s0, s1, s2, s3     channel
 	{ 0,  0,  0,  0 }, // 0

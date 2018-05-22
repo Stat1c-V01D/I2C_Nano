@@ -24,9 +24,27 @@
     <ClInclude Include="CD74HC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TCA9548.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HCSR04.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BH1750.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD74HC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TCA9548.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HCSR04.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BH1750.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
