@@ -2,9 +2,7 @@
 #include "Arduino.h"
 #include <Wire.h>
 #include "TCA9548.h"
-//TODO: IMPORTANT -- Check for variable range and crank in some limitation and security code
-// Uncomment, to enable debug messages
-// #define BH1750_DEBUG
+// #define BH1750_DEBUG //BH1750 API Debug
 // No active state
 #define BH1750_POWER_DOWN 0x00
 // Wating for measurement command
@@ -31,14 +29,15 @@ public:
 		// Measurement at 1lx resolution. Measurement time is approx 120ms.
 		ONE_TIME_LOW_RES_MODE = 0x23
 	};
-	BH1750(int device_id,byte addr = 0x23);
+	BH1750(uint8_t device_id,byte addr = 0x23);
 	bool begin(Mode mode = CONTINUOUS_HIGH_RES_MODE);
 	bool configure(Mode mode);
 	uint16_t read_level(bool maxWait = false);
 	virtual ~BH1750();
 	TCA9548 * tca_com = new TCA9548;
 private:
-	int _dev_id;
+	uint8_t _dev_id;
+	uint8_t _dev_ch;
 	int BH1750_I2CADDR;
 	Mode BH1750_MODE = UNCONFIGURED;
 };

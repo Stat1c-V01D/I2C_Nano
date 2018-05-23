@@ -1,11 +1,18 @@
 #include "BH1750.h"
 #include "Arduino.h"
 #include <Wire.h>
-//TODO: IMPORTANT -- Check for variable range and crank in some limitation and security code
-BH1750::BH1750(int device_id, byte addr)
+//#define DEBUG  //Serial.print Debug messages
+BH1750::BH1750(uint8_t device_id, byte addr)
 {
 	BH1750_I2CADDR = addr;
 	_dev_id = device_id;
+	_dev_ch = device_id;
+#ifdef DEBUG
+	Serial.print("[BH1750] INFO: Initialized with ID: ");
+	Serial.print(device_id);
+	Serial.print(" on Channel: ");
+	Serial.println(_dev_ch);
+#endif // DEBUG
 }
 
 
@@ -19,7 +26,7 @@ bool BH1750::begin(Mode mode)
 bool BH1750::configure(Mode mode)
 {
 	// default transmission result to a value out of normal range
-	byte ack = 0; //TODO: currently set to 0 cause of incomplete code -- see further down
+	byte ack = 5;
 	
 	// Check measurement mode is valid
 	switch (mode) {
@@ -32,13 +39,16 @@ bool BH1750::configure(Mode mode)
 	case BH1750::ONE_TIME_LOW_RES_MODE:
 
 		// Send mode to sensor
-		tca_com->set_ch(_dev_id);
-		_delay_ms(10);
+		tca_com->select(_dev_ch);
+#ifdef DEBUG
+		Serial.print("[BH1750] INFO: Trying to set Mode: ");
+		Serial.print(BH1750_MODE);
+		Serial.print(" to Device: ");
+		Serial.println(_dev_id);
+#endif // DEBUG
 		Wire.beginTransmission(BH1750_I2CADDR);
 		Wire.write((uint8_t)BH1750_MODE);
-		//TODO: enable ack check on Wire.endTransmission
-		Wire.endTransmission();
-		tca_com->disable();
+		ack=Wire.endTransmission();
 
 		// Wait a few moments to wake up
 		_delay_ms(10);
@@ -54,7 +64,14 @@ bool BH1750::configure(Mode mode)
 	// Check result code
 	switch (ack) {
 	case 0:
+#ifdef DEBUG
+		Serial.print(F("[BH1750] SUCCESS: Device ID: "));
+		Serial.print(_dev_id);
+		Serial.print(" on Channel: ");
+		Serial.println(_dev_ch);
+#endif // DEBUG
 		BH1750_MODE = mode;
+		//tca_com->disable(); not needed anymore --ATRIFACT--
 		return true;
 	case 1: // too long for transmit buffer
 		Serial.println(F("[BH1750] ERROR: too long for transmit buffer"));
@@ -76,7 +93,7 @@ bool BH1750::configure(Mode mode)
 uint16_t BH1750::read_level(bool maxWait)
 {
 	if (BH1750_MODE == UNCONFIGURED) {
-		Serial.println(F("[BH1750] Device is not configured!"));
+		Serial.println(F("[BH1750] ERROR: Device is not configured!"));
 		return 0;
 	}
 
@@ -84,11 +101,10 @@ uint16_t BH1750::read_level(bool maxWait)
 	uint16_t level = 65535;
 
 	// Send mode to sensor
-	tca_com->set_ch(_dev_id);
+	tca_com->select(_dev_ch);
 	Wire.beginTransmission(BH1750_I2CADDR);
 	Wire.write((uint8_t)BH1750_MODE);
 	Wire.endTransmission();
-	tca_com->disable();
 
 	// Wait for measurement to be taken.
 	// Measurements have a maximum measurement time and a typical measurement
@@ -119,16 +135,15 @@ uint16_t BH1750::read_level(bool maxWait)
 
 	// Read two bytes from the sensor, which are low and high parts of the sensor
 	// value
-	tca_com->set_ch(_dev_id);
 	Wire.requestFrom(BH1750_I2CADDR, 2);
 	if (Wire.available() == 2) {
 		level = Wire.read();
 		level <<= 8;
 		level |= Wire.read();
 	}
+	//tca_com->disable(); not needed anymore --ATRIFACT--
 	// Convert raw value to lux
 	level /= 1.2;
-	//TODO: add if level<0 --> level = 0 or device not present function maybe fixed/combined with ack-todo further up
 	return level;
 
 }

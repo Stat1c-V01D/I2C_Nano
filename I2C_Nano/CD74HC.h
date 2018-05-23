@@ -1,6 +1,5 @@
 #pragma once
 #include "Arduino.h"
-//TODO: IMPORTANT -- Check for variable range and crank in some limitation and security code
 extern int _g_channel_truth_table[16][4];
 
 class CD74HC
@@ -22,6 +21,26 @@ private:
 	int _s3;
 	int _c_pin;
 	int _en_pin;
+
+	int _g_channel_truth_table[16][4] = {
+		// s0, s1, s2, s3     channel
+		{ 0,  0,  0,  0 }, // 0
+	{ 1,  0,  0,  0 }, // 1
+	{ 0,  1,  0,  0 }, // 2
+	{ 1,  1,  0,  0 }, // 3
+	{ 0,  0,  1,  0 }, // 4
+	{ 1,  0,  1,  0 }, // 5
+	{ 0,  1,  1,  0 }, // 6
+	{ 1,  1,  1,  0 }, // 7
+	{ 0,  0,  0,  1 }, // 8
+	{ 1,  0,  0,  1 }, // 9
+	{ 0,  1,  0,  1 }, // 10
+	{ 1,  1,  0,  1 }, // 11
+	{ 0,  0,  1,  1 }, // 12
+	{ 1,  0,  1,  1 }, // 13
+	{ 0,  1,  1,  1 }, // 14
+	{ 1,  1,  1,  1 }  // 15
+	};
 	
 };
 
